@@ -20,7 +20,7 @@ int main() {
       .randf = glorot_randf,
     },
     (Layer){
-      .size = 48,
+      .size = 32,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     },
@@ -78,7 +78,7 @@ int main() {
 
     if (i % 5000 == 0) {
       float tc = nn_cost(nn, cti, cto);
-      if (tc < 0.07)
+      if (tc < 0.05)
         break;
       printf("cost %zu - %f\n", i, tc);
     }
