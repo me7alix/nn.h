@@ -4,7 +4,7 @@ Simple head-only library for creating simple neural networks in C. I was inspire
 Dependencies: raylib
 
 ## Examples
-### Car racing game:
+### Car racing game
 ![image](https://github.com/user-attachments/assets/6065d312-7891-4117-b867-bf781e3675ba)
 
 ### Remembering pictures

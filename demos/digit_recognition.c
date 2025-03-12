@@ -20,7 +20,7 @@ int main() {
       .randf = glorot_randf,
     },
     (Layer){
-      .size = 32,
+      .size = 48,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     },
@@ -65,7 +65,7 @@ int main() {
 
   // learning process
   size_t batch_size = 16;
-  float learning_rate = 0.005;
+  float learning_rate = 0.007;
 
   for (size_t i = 0; true; i++) { 
     size_t pos = (rand()) % (ti.rows - batch_size);
@@ -74,11 +74,11 @@ int main() {
 
     nn_backprop(nn, g, gti, gto);
     //nn_learn(nn, g, learning_rate);
-    adam_update(nn, &adam, g, 0.002, 0.9, 0.999, 1e-8);
+    adam_update(nn, &adam, g, 0.004, 0.9, 0.999, 1e-8);
 
     if (i % 5000 == 0) {
       float tc = nn_cost(nn, cti, cto);
-      if (tc < 0.05)
+      if (tc < 0.04)
         break;
       printf("cost %zu - %f\n", i, tc);
     }
