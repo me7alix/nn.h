@@ -26,7 +26,7 @@ int main() {
       .randf = glorot_randf,
     },
     (Layer){
-      .size = 7,
+      .size = 10,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
     },
@@ -34,9 +34,9 @@ int main() {
       .size = 10,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
-    },
+    }, 
     (Layer){
-      .size = 6,
+      .size = 10,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
     },
@@ -49,7 +49,6 @@ int main() {
 
   NN nn = nn_alloc(layers, ARR_LEN(layers));
   NN g = nn_alloc(layers, ARR_LEN(layers));
-  AdamOptimizer adam = adam_alloc(nn);
   nn_rand(nn);
 
   // initializing the data
@@ -92,7 +91,7 @@ int main() {
       for(int j = 0; j < 28; j++) { 
         MAT_AT(ti, 0, 0) = j / 28.0;
         MAT_AT(ti, 0, 1) = i / 28.0;
-        MAT_AT(ti, 0, 2) = 0;
+        MAT_AT(ti, 0, 2) = -1;
         MAT_AT(to, 0, 0) = MAT_AT(img1, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
@@ -100,7 +99,7 @@ int main() {
 
         MAT_AT(ti, 0, 0) = j / 28.0;
         MAT_AT(ti, 0, 1) = i / 28.0;
-        MAT_AT(ti, 0, 2) = 0.5;
+        MAT_AT(ti, 0, 2) = 0;
         MAT_AT(to, 0, 0) = MAT_AT(img2, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
@@ -123,7 +122,7 @@ int main() {
       for(int j = 0; j < pixels; j++) { 
         MAT_AT(NN_INPUT(nn), 0, 0) = j / pixels;
         MAT_AT(NN_INPUT(nn), 0, 1) = i / pixels;
-        MAT_AT(NN_INPUT(nn), 0, 2) = input_slider;
+        MAT_AT(NN_INPUT(nn), 0, 2) = input_slider * 2 - 1;
         nn_forward(nn);
 
         float c = MAT_AT(NN_OUTPUT(nn), 0, 0) * 255.0;
