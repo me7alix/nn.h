@@ -79,6 +79,7 @@ int main() {
     }
   }
 
+  printf("Press S+ENTER to stop learning process\n");
   printf("cost before training = %f\n", nn_cost(nn, cti, cto));
 
   // learning process
