@@ -73,7 +73,7 @@ int main() {
  
   // learning process
   size_t batch_size = 16;
-  float learning_rate = 0.002;
+  float learning_rate = 0.003;
 
   for (size_t i = 0; true; i++) { 
     size_t pos = (rand()) % (imgs.rows - batch_size);
@@ -81,7 +81,6 @@ int main() {
     Mat gto = mat_submatrix(imgs, 0, pos, imgs.cols - 1, pos + batch_size);
 
     nn_backprop(nn, g, gti, gto);
-    //nn_learn(nn, g, learning_rate);
     adam_update(nn, &adam, g, learning_rate, 0.9, 0.999, 1e-8);
 
     if (i % 600 == 0) {
