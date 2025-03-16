@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <time.h>
 #include <raylib.h>
 #include "../csv_parser.c"
@@ -8,7 +9,24 @@
 #define NN_IMPLEMENTATION
 #include "../nn.h"
 
+
 void paint(NN nn);
+
+bool wait_for_keypress() {
+  fd_set fds;
+  struct timeval timeout = {0, 0};
+  FD_ZERO(&fds);
+  FD_SET(0, &fds);
+
+  if (select(1, &fds, NULL, NULL, &timeout) > 0) {
+    char input = getchar();
+    if (input == 'S' || input == 's') {
+      return 1; 
+    }
+  }
+
+  return 0;
+}
 
 int main() {
   srand(time(0));
@@ -65,7 +83,7 @@ int main() {
 
   // learning process
   size_t batch_size = 16;
-  float learning_rate = 0.007;
+  float learning_rate = 0.004;
 
   for (size_t i = 0; true; i++) { 
     size_t pos = (rand()) % (ti.rows - batch_size);
@@ -73,13 +91,12 @@ int main() {
     Mat gto = mat_submatrix(to, 0, pos, to.cols - 1, pos + batch_size);
 
     nn_backprop(nn, g, gti, gto);
-    //nn_learn(nn, g, learning_rate);
-    adam_update(nn, &adam, g, 0.004, 0.9, 0.999, 1e-8);
+    adam_update(nn, &adam, g, learning_rate, 0.9, 0.999, 1e-8);
 
     if (i % 5000 == 0) {
+      if (wait_for_keypress()) break;
+
       float tc = nn_cost(nn, cti, cto);
-      if (tc < 0.04)
-        break;
       printf("cost %zu - %f\n", i, tc);
     }
   }
@@ -191,6 +208,6 @@ void paint(NN nn) {
 
     EndDrawing();
   }
-
+  
   CloseWindow();
 }

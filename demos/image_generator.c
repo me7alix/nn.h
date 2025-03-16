@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,22 @@ void draw_mat(Mat m, Vector2 pos, int tile){
     float c = MAT_AT(m, 0, i) * 255.0;
     DrawRectangle(pos.x + (i % 28) * tile, pos.y + (int)(i / 28) * tile, tile, tile, (Color){c, c, c, 255});
   }
+}
+
+bool wait_for_keypress() {
+  fd_set fds;
+  struct timeval timeout = {0, 0};
+  FD_ZERO(&fds);
+  FD_SET(0, &fds);
+
+  if (select(1, &fds, NULL, NULL, &timeout) > 0) {
+    char input = getchar();
+    if (input == 'S' || input == 's') {
+      return 1; 
+    }
+  }
+
+  return 0;
 }
 
 int main() {
@@ -70,6 +87,8 @@ int main() {
       MAT_AT(imgs, i, j) /= 255.0;
     }
   }
+
+  printf("Press S+ENTER to stop learning process\n");
  
   // learning process
   size_t batch_size = 16;
@@ -84,32 +103,22 @@ int main() {
     adam_update(nn, &adam, g, learning_rate, 0.9, 0.999, 1e-8);
 
     if (i % 600 == 0) {
-      fd_set fds;
-      struct timeval timeout = {0, 0};
-      FD_ZERO(&fds);
-      FD_SET(0, &fds);
-
-      if (select(1, &fds, NULL, NULL, &timeout) > 0) {
-        char input = getchar();
-        if (input == 'S' || input == 's') {
-          break; 
-        }
-      }
+      if (wait_for_keypress()) break;
 
       float tc = nn_cost(nn, cti, cti);
       printf("cost %zu - %f\n", i, tc);
     }
   }
 
+  // decoder neural network
   Layer layers_2[] = {
     (Layer){
       .size = 4,
-      .actf = ACT_SIGM,
       .randf = glorot_randf,
     },
     (Layer){
       .size = 16,
-      .actf = ACT_RELU,
+      .actf = ACT_SIGM,
       .randf = glorot_randf,
     },
     (Layer){
@@ -127,6 +136,7 @@ int main() {
   NN nn_2 = nn_alloc(layers_2, ARR_LEN(layers_2));
   size_t from = 3;
 
+  // coping the decoder part of the neural network
   for (size_t i = from; i < nn.count; i++) {
     mat_copy(nn_2.ws[i-from], nn.ws[i]);
     mat_copy(nn_2.bs[i-from], nn.bs[i]);
@@ -139,7 +149,7 @@ int main() {
 
   while (!WindowShouldClose()) {
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(DARKGRAY);
 
     Mat inp = mat_alloc(1, 3);
 
@@ -148,32 +158,21 @@ int main() {
       nn_forward(nn_2);
     }
 
-    if (IsKeyDown(KEY_ONE)) {
-      MAT_AT(inp, 0, 0) = fmin(1.0, fmaxf(GetMouseX()/(float)screenWidth, 0));
-      mat_copy(NN_INPUT(nn_2), inp);
-      nn_forward(nn_2);
-    }
-
-    if (IsKeyDown(KEY_TWO)) {
-      MAT_AT(inp, 0, 1) = fmin(1.0, fmaxf(GetMouseX()/(float)screenWidth, 0));
-      mat_copy(NN_INPUT(nn_2), inp);
-      nn_forward(nn_2);
-    }
-
-    if (IsKeyDown(KEY_THREE)) {
-      MAT_AT(inp, 0, 2) = fmin(1.0, fmaxf(GetMouseX()/(float)screenWidth, 0));
-      mat_copy(NN_INPUT(nn_2), inp);
-      nn_forward(nn_2);
-    }
-
-
     draw_mat(NN_OUTPUT(nn_2), (Vector2){10, 10}, 10);
     draw_mat(NN_OUTPUT(nn_2), (Vector2){290, 10}, 10);
     draw_mat(NN_OUTPUT(nn_2), (Vector2){10, 290}, 10);
     draw_mat(NN_OUTPUT(nn_2), (Vector2){290, 290}, 10);
 
+    DrawText("Press ENTER\nto generate\na random image", 580, 10, 20, WHITE);
+
     EndDrawing();
   } 
+
+  nn_free(nn);
+  nn_free(g);
+  nn_free(nn_2);
+  mat_free(mat);
+  adam_free(adam);
 
   CloseWindow();
   return 0;

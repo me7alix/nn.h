@@ -87,8 +87,8 @@ int main() {
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
-    for(int i = 0; i < 28; i++) {
-      for(int j = 0; j < 28; j++) { 
+    for (int i = 0; i < 28; i++) {
+      for (int j = 0; j < 28; j++) { 
         MAT_AT(ti, 0, 0) = j / 28.0;
         MAT_AT(ti, 0, 1) = i / 28.0;
         MAT_AT(ti, 0, 2) = -1;
@@ -118,8 +118,8 @@ int main() {
     Vector2 pos = {320, 320};
     float scale = 3;
     float pixels = 280.0/scale;
-    for(int i = 0; i < pixels; i++) {
-      for(int j = 0; j < pixels; j++) { 
+    for (int i = 0; i < pixels; i++) {
+      for (int j = 0; j < pixels; j++) { 
         MAT_AT(NN_INPUT(nn), 0, 0) = j / pixels;
         MAT_AT(NN_INPUT(nn), 0, 1) = i / pixels;
         MAT_AT(NN_INPUT(nn), 0, 2) = input_slider * 2 - 1;
@@ -141,7 +141,10 @@ int main() {
     EndDrawing();
   }
 
-  CloseWindow();
+  nn_free(nn);
+  nn_free(g);
+  mat_free(mat);
 
+  CloseWindow();
   return 0;
 }
