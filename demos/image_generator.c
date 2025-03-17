@@ -12,7 +12,12 @@
 void draw_mat(Mat m, Vector2 pos, int tile){
   for (int i = 0; i < 28 * 28; i++) {
     float c = MAT_AT(m, 0, i) * 255.0;
-    DrawRectangle(pos.x + (i % 28) * tile, pos.y + (int)(i / 28) * tile, tile, tile, (Color){c, c, c, 255});
+    DrawRectangle(
+      pos.x + (i % 28) * tile,
+      pos.y + (int)(i / 28) * tile,
+      tile, tile,
+      (Color){c, c, c, 255}
+    );
   }
 }
 
@@ -54,7 +59,7 @@ int main() {
     }, 
     (Layer){
       .size = 4,
-      .actf = ACT_SIGM,
+      .actf = ACT_RELU,
       .randf = glorot_randf,
     },
     (Layer){
@@ -118,7 +123,7 @@ int main() {
     },
     (Layer){
       .size = 16,
-      .actf = ACT_SIGM,
+      .actf = ACT_RELU,
       .randf = glorot_randf,
     },
     (Layer){
