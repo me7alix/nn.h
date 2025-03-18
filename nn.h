@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NN_BACKPROP_TRADITIONAL
+//#define NN_BACKPROP_TRADITIONAL
 
 typedef struct {
   float *es;
@@ -407,6 +407,7 @@ void nn_print(NN nn, const char *name) {
 
 void nn_rand(NN nn) {
   for (size_t i = 0; i < nn.count; i++) {
+    mat_zero(nn.bs[i]);
     mat_rand(nn.ws[i], nn.layers[i + 1].randf, nn.layers[i].size);
   }
 }

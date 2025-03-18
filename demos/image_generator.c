@@ -45,7 +45,6 @@ int main() {
   Layer layers[] = {
     (Layer){
       .size = 28*28,
-      .randf = glorot_randf,
     },
     (Layer){
       .size = 64,
@@ -58,8 +57,8 @@ int main() {
       .randf = glorot_randf,
     }, 
     (Layer){
-      .size = 4,
-      .actf = ACT_RELU,
+      .size = 5,
+      .actf = ACT_SIGM,
       .randf = glorot_randf,
     },
     (Layer){
@@ -94,10 +93,10 @@ int main() {
   }
 
   printf("Press S+ENTER to stop learning process\n");
- 
+
   // learning process
   size_t batch_size = 16;
-  float learning_rate = 0.003;
+  float learning_rate = 0.002;
 
   for (size_t i = 0; true; i++) { 
     size_t pos = (rand()) % (imgs.rows - batch_size);
@@ -118,8 +117,7 @@ int main() {
   // decoder neural network
   Layer layers_2[] = {
     (Layer){
-      .size = 4,
-      .randf = glorot_randf,
+      .size = 5,
     },
     (Layer){
       .size = 16,
