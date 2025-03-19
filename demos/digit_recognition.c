@@ -9,7 +9,6 @@
 #define NN_IMPLEMENTATION
 #include "../nn.h"
 
-
 void paint(NN nn);
 
 bool wait_for_keypress() {
@@ -84,7 +83,7 @@ int main() {
 
   // learning process
   size_t batch_size = 16;
-  float learning_rate = 0.004;
+  float learning_rate = 0.002;
 
   for (size_t i = 0; true; i++) { 
     size_t pos = (rand()) % (ti.rows - batch_size);

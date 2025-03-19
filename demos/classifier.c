@@ -5,7 +5,11 @@
 #define NN_IMPLEMENTATION
 #include "../nn.h"
 
-#define TCAP 200
+//#define ADAM_OPT
+
+#define TCAP 256
+
+bool is_learning_started = false;
 
 void draw_points(Vector2 points[TCAP], int size, Color clr, int sw, int sh) {
   for (int i = 0; i < size; i++) {
@@ -34,22 +38,27 @@ int main(void) {
       .size = 2,
     },
     (Layer){
-      .actf = ACT_RELU,
+      .actf = ACT_SIGM,
       .size = 6,
       .randf = glorot_randf,
     },
     (Layer){
-      .actf = ACT_RELU,
+      .actf = ACT_SIGM,
       .size = 6,
       .randf = glorot_randf,
     },
     (Layer){
-      .actf = ACT_RELU,
+      .actf = ACT_SIGM,
       .size = 6,
       .randf = glorot_randf,
     },
     (Layer){
-      .actf = ACT_SOFTMAX,
+      .actf = ACT_SIGM,
+      .size = 6,
+      .randf = glorot_randf,
+    },
+    (Layer){
+      .actf = ACT_SIGM,
       .size = 2,
       .randf = glorot_randf,
     },
@@ -57,9 +66,14 @@ int main(void) {
 
   NN nn = nn_alloc(layers, ARR_LEN(layers)); 
   NN g = nn_alloc(layers, ARR_LEN(layers)); 
+
+#ifdef ADAM_OPT
+  AdamOptimizer adam = adam_alloc(nn);
+#endif
+
   nn_rand(nn);
 
-  float learning_rate = 0.0015;
+  float learning_rate = 0.01;
   Mat inp = mat_alloc(1, 2);
   Mat outp = mat_alloc(1, 2);
 
@@ -75,6 +89,7 @@ int main(void) {
       n.y /= (float)screenHeight;
       type1[type1_size++] = n;
     }
+
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) { 
       Vector2 n = GetMousePosition();
       n.x /= (float)screenWidth;
@@ -82,8 +97,12 @@ int main(void) {
       type2[type2_size++] = n;
     }
 
-    for (int o = 0; o < 20; o++) {
-      if (type1_size == 0 || type2_size == 0) continue;
+    if (IsKeyPressed(KEY_ENTER)) {
+      is_learning_started = true;
+    }
+
+    for (int o = 0; o < 80; o++) {
+      if (type1_size == 0 || type2_size == 0 || !is_learning_started) continue;
 
       MAT_AT(inp, 0, 0) = type1[iter%type1_size].x; 
       MAT_AT(inp, 0, 1) = type1[iter%type1_size].y;
@@ -91,7 +110,12 @@ int main(void) {
       MAT_AT(outp, 0, 1) = 0;
 
       nn_backprop(nn, g, inp, outp);
+
+#ifdef ADAM_OPT
+      adam_update(nn, &adam, g, learning_rate, 0.9, 0.999, 1e-8);
+#else 
       nn_learn(nn, g, learning_rate); 
+#endif
 
       MAT_AT(inp, 0, 0) = type2[iter%type2_size].x; 
       MAT_AT(inp, 0, 1) = type2[iter%type2_size].y;
@@ -99,8 +123,13 @@ int main(void) {
       MAT_AT(outp, 0, 1) = 1;
 
       nn_backprop(nn, g, inp, outp);
+
+#ifdef ADAM_OPT
+      adam_update(nn, &adam, g, learning_rate, 0.9, 0.999, 1e-8);
+#else 
       nn_learn(nn, g, learning_rate); 
-      
+#endif      
+
       iter++;
     }
 
@@ -122,6 +151,7 @@ int main(void) {
 
     draw_points(type1, type1_size, LIGHTGRAY, screenWidth, screenHeight);
     draw_points(type2, type2_size, PURPLE, screenWidth, screenHeight);
+    DrawText("Press ENTER to start learning process", 20, 20, 20, BLACK);
 
     EndDrawing();
   }

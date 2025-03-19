@@ -42,6 +42,7 @@ int main() {
   Mat mat = parse_csv_to_mat("./dataset/train.csv");
   Mat cti = mat_submatrix(mat, 1, 0, mat.cols - 1, 1000);
 
+  const int decoder_inputs_num = 4;
   Layer layers[] = {
     (Layer){
       .size = 28*28,
@@ -50,14 +51,14 @@ int main() {
       .size = 64,
       .actf = ACT_RELU,
       .randf = glorot_randf,
-    },
+    }, 
     (Layer){
       .size = 16,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
     }, 
     (Layer){
-      .size = 5,
+      .size = decoder_inputs_num,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
     },
@@ -65,7 +66,7 @@ int main() {
       .size = 16,
       .actf = ACT_RELU,
       .randf = glorot_randf,
-    },
+    }, 
     (Layer){
       .size = 64,
       .actf = ACT_RELU,
@@ -95,7 +96,7 @@ int main() {
   printf("Press S+ENTER to stop learning process\n");
 
   // learning process
-  size_t batch_size = 16;
+  size_t batch_size = 32;
   float learning_rate = 0.002;
 
   for (size_t i = 0; true; i++) { 
@@ -117,13 +118,13 @@ int main() {
   // decoder neural network
   Layer layers_2[] = {
     (Layer){
-      .size = 5,
+      .size = decoder_inputs_num,
     },
     (Layer){
       .size = 16,
       .actf = ACT_RELU,
       .randf = glorot_randf,
-    },
+    }, 
     (Layer){
       .size = 64,
       .actf = ACT_RELU,
