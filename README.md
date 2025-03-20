@@ -14,7 +14,7 @@ Dependencies: raylib
 ![image](https://github.com/user-attachments/assets/10011ac4-014f-498d-ae83-a9a41ee5a938)
 
 ### Image generator
-![image](https://github.com/user-attachments/assets/d71bc57f-8760-4600-b64b-41e551585b66)
+![image](https://github.com/user-attachments/assets/305447e5-a161-4b30-ab66-0907d3e4dc91)
 
 ### Classifier
 ![image](https://github.com/user-attachments/assets/5432de2c-ebf9-453c-b13c-e9e81196630d)
