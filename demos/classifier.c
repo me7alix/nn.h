@@ -11,7 +11,8 @@
 
 bool is_learning_started = false;
 
-void draw_points(Vector2 points[TCAP], int size, Color clr, int sw, int sh) {
+void draw_points(Vector2 points[TCAP], int size, Color clr,
+                 int sw, int sh) {
   for (int i = 0; i < size; i++) {
     Vector2 res = points[i];
     res.x *= (float)sw;

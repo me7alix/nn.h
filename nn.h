@@ -29,6 +29,7 @@ void mat_f(Mat a, float (*func)(float el));
 void mat_rand(Mat a, float (*randf)(size_t), size_t inputs_num);
 void mat_rand_between(Mat a, float low, float high);
 void mat_zero(Mat a);
+void mat_one(Mat a);
 Mat mat_row(Mat a, size_t r);
 void mat_copy(Mat dst, Mat src);
 #define MAT_PRINT(m) mat_print(m, #m, 0)
@@ -273,6 +274,14 @@ void mat_zero(Mat a) {
   for (size_t i = 0; i < a.rows; i++) {
     for (size_t j = 0; j < a.cols; j++) {
       MAT_AT(a, i, j) = 0;
+    }
+  }
+}
+
+void mat_one(Mat a) {
+  for (size_t i = 0; i < a.rows; i++) {
+    for (size_t j = 0; j < a.cols; j++) {
+      MAT_AT(a, i, j) = 1;
     }
   }
 }
