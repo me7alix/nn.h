@@ -89,29 +89,29 @@ int main() {
 
     for (int i = 0; i < 28; i++) {
       for (int j = 0; j < 28; j++) { 
-        MAT_AT(ti, 0, 0) = j / 28.0;
-        MAT_AT(ti, 0, 1) = i / 28.0;
+        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5) * 2;
+        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5) * 2;
         MAT_AT(ti, 0, 2) = -1;
         MAT_AT(to, 0, 0) = MAT_AT(img1, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
-        nn_learn(nn, g, 0.03 * learning_rate_slider);
+        nn_learn(nn, g, 0.02 * learning_rate_slider);
 
-        MAT_AT(ti, 0, 0) = j / 28.0;
-        MAT_AT(ti, 0, 1) = i / 28.0;
+        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5) * 2;
+        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5) * 2;
         MAT_AT(ti, 0, 2) = 0;
         MAT_AT(to, 0, 0) = MAT_AT(img2, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
-        nn_learn(nn, g, 0.03 * learning_rate_slider);      
+        nn_learn(nn, g, 0.02 * learning_rate_slider);      
 
-        MAT_AT(ti, 0, 0) = j / 28.0;
-        MAT_AT(ti, 0, 1) = i / 28.0;
+        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5) * 2;
+        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5) * 2;
         MAT_AT(ti, 0, 2) = 1;
         MAT_AT(to, 0, 0) = MAT_AT(img3, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
-        nn_learn(nn, g, 0.01 * learning_rate_slider);
+        nn_learn(nn, g, 0.02 * learning_rate_slider);
       }
     }
     
@@ -120,8 +120,8 @@ int main() {
     float pixels = 280.0/scale;
     for (int i = 0; i < pixels; i++) {
       for (int j = 0; j < pixels; j++) { 
-        MAT_AT(NN_INPUT(nn), 0, 0) = j / pixels;
-        MAT_AT(NN_INPUT(nn), 0, 1) = i / pixels;
+        MAT_AT(NN_INPUT(nn), 0, 0) = (j / pixels - 0.5) * 2;
+        MAT_AT(NN_INPUT(nn), 0, 1) = (i / pixels - 0.5) * 2;
         MAT_AT(NN_INPUT(nn), 0, 2) = input_slider * 2 - 1;
         nn_forward(nn);
 

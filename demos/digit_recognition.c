@@ -35,14 +35,14 @@ int main() {
     (Layer){
       .size = 28*28,
       .randf = glorot_randf,
-    },
+    }, 
     (Layer){
-      .size = 48,
+      .size = 128,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     },
     (Layer){
-      .size = 16,
+      .size = 64,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     }, 
@@ -82,8 +82,8 @@ int main() {
   printf("cost before training = %f\n", nn_cost(nn, cti, cto));
 
   // learning process
-  size_t batch_size = 16;
-  float learning_rate = 0.002;
+  size_t batch_size = 32;
+  float learning_rate = 0.001;
 
   for (size_t i = 0; true; i++) { 
     size_t pos = (rand()) % (ti.rows - batch_size);
