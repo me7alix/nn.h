@@ -83,7 +83,7 @@ int main() {
   Mat cti = mat_submatrix(mat, 1, 0, mat.cols - 1, 2000);
 
   // Increased latent space dimensions
-  const int latent_dims = 10;
+  const int latent_dims = 16;
   
   // Improved architecture with more layers and neurons
   Layer layers[] = {
@@ -154,9 +154,9 @@ int main() {
   printf("Press S+ENTER to stop learning process\n");
 
   // Improved learning parameters
-  size_t batch_size = 64;  // Increased batch size
-  float learning_rate = 0.001;  // Adjusted learning rate
-  float noise_level = 0.05f;  // Noise for data augmentation
+  size_t batch_size = 48;  // Increased batch size
+  float learning_rate = 0.002;  // Adjusted learning rate
+  float noise_level = 0.02f;  // Noise for data augmentation
   size_t max_iterations = 100000;  // Set a reasonable maximum
   float best_cost = 1000.0f;  // Keep track of best model
   

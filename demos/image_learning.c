@@ -48,6 +48,11 @@ int main() {
       .size = 10,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
+    }, 
+    (Layer){
+      .size = 10,
+      .actf = ACT_SIGM,
+      .randf = glorot_randf,
     },
     (Layer){
       .size = 1,
@@ -139,9 +144,9 @@ int main() {
     float pixels = 280.0/scale;
     for (int i = 0; i < pixels; i++) {
       for (int j = 0; j < pixels; j++) { 
-        MAT_AT(NN_INPUT(nn), 0, 0) = (j / pixels - 0.5) * 2;
-        MAT_AT(NN_INPUT(nn), 0, 1) = (i / pixels - 0.5) * 2;
-        MAT_AT(NN_INPUT(nn), 0, 2) = input_slider * 2 - 1;
+        MAT_AT(NN_INPUT(nn), 0, 0) = (j / pixels - 0.5);
+        MAT_AT(NN_INPUT(nn), 0, 1) = (i / pixels - 0.5);
+        MAT_AT(NN_INPUT(nn), 0, 2) = input_slider - 0.5;
         nn_forward(nn);
 
         float c = MAT_AT(NN_OUTPUT(nn), 0, 0) * 255.0;
