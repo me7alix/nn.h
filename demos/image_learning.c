@@ -16,6 +16,16 @@ void draw_mat(Mat m, Vector2 pos, int tile){
   }
 }
 
+void mat_print_2(Mat m) {
+  for (int i = 0; i < m.rows; i++) {
+    printf("\t");
+    for (int j = 0; j < m.cols; j++) {
+      printf("%f, ", MAT_AT(m, i, j));
+    }
+    printf("\n");
+  }
+}
+
 int main() {
   srand(time(0));
   Mat mat = parse_csv_to_mat("./dataset/train.csv");
@@ -23,18 +33,17 @@ int main() {
   Layer layers[] = {
     (Layer){
       .size = 3,
-      .randf = glorot_randf,
-    },
-    (Layer){
-      .size = 10,
-      .actf = ACT_SIGM,
-      .randf = glorot_randf,
     },
     (Layer){
       .size = 10,
       .actf = ACT_SIGM,
       .randf = glorot_randf,
     }, 
+    (Layer){
+      .size = 10,
+      .actf = ACT_SIGM,
+      .randf = glorot_randf,
+    },
     (Layer){
       .size = 10,
       .actf = ACT_SIGM,
@@ -78,36 +87,46 @@ int main() {
   SetTargetFPS(60);
 
   while (!WindowShouldClose()) {
-    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
       input_slider = fmin(1.0, fmaxf(GetMouseX()/(float)screen_width, 0));
 
-    if(IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
       learning_rate_slider = fmin(1.0, fmaxf(GetMouseX()/(float)screen_width, 0));
+
+    if (IsKeyPressed(KEY_ENTER)) {
+      for (int i = 0; i < nn.count; i++) {
+        printf("ws[%i]\n", i);
+        mat_print_2(nn.ws[i]);
+
+        printf("bs[%i]\n", i);
+        mat_print_2(nn.bs[i]);
+      }
+    }
 
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
     for (int i = 0; i < 28; i++) {
       for (int j = 0; j < 28; j++) { 
-        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5) * 2;
-        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5) * 2;
-        MAT_AT(ti, 0, 2) = -1;
+        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5);
+        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5);
+        MAT_AT(ti, 0, 2) = -0.5;
         MAT_AT(to, 0, 0) = MAT_AT(img1, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
         nn_learn(nn, g, 0.02 * learning_rate_slider);
 
-        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5) * 2;
-        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5) * 2;
+        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5);
+        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5);
         MAT_AT(ti, 0, 2) = 0;
         MAT_AT(to, 0, 0) = MAT_AT(img2, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
         nn_learn(nn, g, 0.02 * learning_rate_slider);      
 
-        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5) * 2;
-        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5) * 2;
-        MAT_AT(ti, 0, 2) = 1;
+        MAT_AT(ti, 0, 0) = (j / 28.0 - 0.5);
+        MAT_AT(ti, 0, 1) = (i / 28.0 - 0.5);
+        MAT_AT(ti, 0, 2) = 0.5;
         MAT_AT(to, 0, 0) = MAT_AT(img3, 0, i*28+j);
 
         nn_backprop(nn, g, ti, to);
