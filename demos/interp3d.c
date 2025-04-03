@@ -41,8 +41,8 @@ int main(void) {
   
   nn_rand(nn);
 
-  Voxel *torus = load_vox_model("models/torus_small.vox");
-  Voxel *apple = load_vox_model("models/apple_small.vox");
+  Voxel *torus = load_vox_model("../models/torus_small.vox");
+  Voxel *apple = load_vox_model("../models/apple_small.vox");
 
   Mat input = mat_alloc(1, 4);
   Mat output = mat_alloc(1, 1);
