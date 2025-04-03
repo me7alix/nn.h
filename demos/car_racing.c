@@ -116,7 +116,7 @@ void walls_pop() {
     walls_cnt--;
 }
 
-void walls_draw() {
+void walls_draw() {   
   for (int i = 0; i < walls_cnt; i++) {
     DrawLineV(walls[i].p1, walls[i].p2, RED);
   }

@@ -65,6 +65,8 @@ int main() {
   NN g = nn_alloc(layers, ARR_LEN(layers));
   nn_rand(nn);
 
+  NN_PRINT(nn);
+
   // initializing the data
   Mat imgs = mat_submatrix(mat, 1, 0, mat.cols - 1, mat.rows - 1);
 

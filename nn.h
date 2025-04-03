@@ -394,6 +394,7 @@ NN nn_alloc(Layer *layers, size_t layers_count) {
   assert(nn.layers != NULL);
 
   nn.as[0] = mat_alloc(1, layers[0].size);
+  nn.layers[0] = layers[0];
 
   for (size_t i = 1; i < layers_count; i++) {
     nn.ws[i - 1] = mat_alloc(nn.as[i - 1].cols, layers[i].size);
