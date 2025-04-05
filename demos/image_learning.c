@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include <raylib.h>
-#include "../csv_parser.c"
+#include "../parsers/csv_parser.c"
 
 #define NN_IMPLEMENTATION
 #include "../nn.h"
@@ -31,41 +31,16 @@ int main() {
   Mat mat = parse_csv_to_mat("./dataset/train.csv");
 
   Layer layers[] = {
-    (Layer){
-      .size = 3,
-    },
-    (Layer){
-      .size = 10,
-      .actf = ACT_SIGM,
-      .randf = glorot_randf,
-    }, 
-    (Layer){
-      .size = 10,
-      .actf = ACT_SIGM,
-      .randf = glorot_randf,
-    },
-    (Layer){
-      .size = 10,
-      .actf = ACT_SIGM,
-      .randf = glorot_randf,
-    }, 
-    (Layer){
-      .size = 10,
-      .actf = ACT_SIGM,
-      .randf = glorot_randf,
-    },
-    (Layer){
-      .size = 1,
-      .actf = ACT_SIGM,
-      .randf = glorot_randf,
-    }
+    (Layer){ .size = 3 },
+    (Layer){ .size = 10, .actf = ACT_SIGM, .randf = glorot_randf }, 
+    (Layer){ .size = 10, .actf = ACT_SIGM, .randf = glorot_randf }, 
+    (Layer){ .size = 10, .actf = ACT_SIGM, .randf = glorot_randf }, 
+    (Layer){ .size = 1, .actf = ACT_SIGM, .randf = glorot_randf }
   };
 
   NN nn = nn_alloc(layers, ARR_LEN(layers));
   NN g = nn_alloc(layers, ARR_LEN(layers));
   nn_rand(nn);
-
-  NN_PRINT(nn);
 
   // initializing the data
   Mat imgs = mat_submatrix(mat, 1, 0, mat.cols - 1, mat.rows - 1);
@@ -90,6 +65,8 @@ int main() {
   const int screen_width = 920;
   const int screen_height = 640;
 
+  int iter = 0;
+
   InitWindow(screen_width, screen_height, "Image learning");
   SetTargetFPS(60);
 
@@ -109,6 +86,10 @@ int main() {
         mat_print_2(nn.bs[i]);
       }
     }
+
+    if (iter % 100 == 0) 
+      printf("iter - %i\n", iter);
+    iter++;
 
     BeginDrawing();
     ClearBackground(DARKGRAY);
@@ -139,7 +120,7 @@ int main() {
         nn_backprop(nn, g, ti, to);
         nn_learn(nn, g, 0.02 * learning_rate_slider);
       }
-    }
+    } 
     
     Vector2 pos = {320, 320};
     float scale = 3;

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include <raylib.h>
-#include "../csv_parser.c"
+#include "../parsers/csv_parser.c"
 
 #define NN_IMPLEMENTATION
 #include "../nn.h"
