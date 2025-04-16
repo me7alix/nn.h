@@ -22,29 +22,6 @@ void draw_mat(Mat m, Vector2 pos, int tile){
   }
 }
 
-// Draw heat map of latent space activations
-void draw_latent_activations(Mat m, Vector2 pos, int size) {
-  int dims = m.cols;
-  int cellSize = size / dims;
-  
-  for (int i = 0; i < dims; i++) {
-    float activation = MAT_AT(m, 0, i);
-    int colorValue = (int)(activation * 255.0f);
-    DrawRectangle(
-      pos.x + i * cellSize,
-      pos.y,
-      cellSize, 
-      cellSize,
-      (Color){colorValue, colorValue, 255, 255}
-    );
-    
-    // Draw value text
-    char value[8];
-    sprintf(value, "%.2f", activation);
-    DrawText(value, pos.x + i * cellSize, pos.y + cellSize + 5, 10, WHITE);
-  }
-}
-
 bool wait_for_keypress() {
   fd_set fds;
   struct timeval timeout = {0, 0};
@@ -61,7 +38,6 @@ bool wait_for_keypress() {
   return 0;
 }
 
-// Simple data augmentation by adding noise
 void add_noise_to_batch(Mat batch, float noise_level) {
   for (size_t i = 0; i < batch.rows; i++) {
     for (size_t j = 0; j < batch.cols; j++) {
@@ -83,7 +59,7 @@ int main() {
   Mat cti = mat_submatrix(mat, 1, 0, mat.cols - 1, 2000);
 
   // Increased latent space dimensions
-  const int latent_dims = 16;
+  const int latent_dims = 2;
   
   // Improved architecture with more layers and neurons
   Layer layers[] = {
@@ -98,12 +74,12 @@ int main() {
       .randf = glorot_randf,
     }, 
     (Layer){
-      .size = 64,
+      .size = 32,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     }, 
     (Layer){
-      .size = 32,
+      .size = 8,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     }, 
@@ -115,12 +91,12 @@ int main() {
     },
     // Decoder layers
     (Layer){
-      .size = 32,
+      .size = 8,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     }, 
     (Layer){
-      .size = 64,
+      .size = 32,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     },
@@ -154,9 +130,9 @@ int main() {
   printf("Press S+ENTER to stop learning process\n");
 
   // Improved learning parameters
-  size_t batch_size = 48;  // Increased batch size
-  float learning_rate = 0.002;  // Adjusted learning rate
-  float noise_level = 0.02f;  // Noise for data augmentation
+  size_t batch_size = 32;  // Increased batch size
+  float learning_rate = 0.001;  // Adjusted learning rate
+  float noise_level = 0.01f;  // Noise for data augmentation
   size_t max_iterations = 100000;  // Set a reasonable maximum
   float best_cost = 1000.0f;  // Keep track of best model
   
@@ -214,12 +190,12 @@ int main() {
     },
     // Decoder layers
     (Layer){
-      .size = 32,
+      .size = 8,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     }, 
     (Layer){
-      .size = 64,
+      .size = 32,
       .actf = ACT_RELU,
       .randf = glorot_randf,
     },
@@ -276,6 +252,13 @@ int main() {
       mat_rand_between(NN_INPUT(decoder), 0.0, 1.0);
       nn_forward(decoder);
     }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+      MAT_AT(NN_INPUT(decoder), 0, 0) = ((float)GetMouseX() / screenWidth);
+      MAT_AT(NN_INPUT(decoder), 0, 1) = ((float)GetMouseY() / screenHeight);
+
+      nn_forward(decoder);
+    }
     
     if (IsKeyPressed(KEY_SPACE)) {
       // Start interpolation
@@ -313,7 +296,6 @@ int main() {
         interpolating = false;
       }
       
-      // Linear interpolation between start and end points
       for (int d = 0; d < latent_dims; d++) {
         float start_val = MAT_AT(latent_start, 0, d);
         float end_val = MAT_AT(latent_end, 0, d);
@@ -331,31 +313,13 @@ int main() {
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
-    // Draw the generated image
     draw_mat(NN_OUTPUT(decoder), (Vector2){50, 50}, 10);
     
-    // Draw UI for latent space exploration
     DrawText("LATENT SPACE EXPLORER", 400, 50, 20, WHITE);
     
-    // Instructions
     DrawText("Controls:", 400, 80, 15, WHITE);
     DrawText("- ENTER: Random image", 400, 100, 13, WHITE);
     DrawText("- SPACE: Animate between random points", 400, 120, 13, WHITE);
-    DrawText("- LEFT/RIGHT: Select dimension", 400, 140, 13, WHITE);
-    DrawText("- UP/DOWN: Adjust selected dimension", 400, 160, 13, WHITE);
-    
-    // Draw latent dimensions
-    DrawText("Latent Space Visualization:", 50, 350, 15, WHITE);
-    draw_latent_activations(NN_INPUT(decoder), (Vector2){50, 380}, 700);
-    
-    // Highlight selected dimension
-    DrawRectangleLines(
-      50 + selected_dim * (700/latent_dims), 
-      380, 
-      700/latent_dims, 
-      20, 
-      RED
-    );
     
     // Draw slider for currently selected dimension
     DrawText(TextFormat("Dimension %d:", selected_dim), 50, 450, 15, WHITE);

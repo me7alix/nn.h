@@ -32,11 +32,12 @@ int main() {
 
   Layer layers[] = {
     (Layer){ .size = 3 },
-    (Layer){ .size = 10, .actf = ACT_SIGM, .randf = glorot_randf }, 
-    (Layer){ .size = 10, .actf = ACT_SIGM, .randf = glorot_randf }, 
+    (Layer){ .size = 10, .actf = ACT_TANH, .randf = glorot_randf }, 
+    (Layer){ .size = 10, .actf = ACT_TANH, .randf = glorot_randf }, 
     (Layer){ .size = 10, .actf = ACT_SIGM, .randf = glorot_randf }, 
     (Layer){ .size = 1, .actf = ACT_SIGM, .randf = glorot_randf }
   };
+
 
   NN nn = nn_alloc(layers, ARR_LEN(layers));
   NN g = nn_alloc(layers, ARR_LEN(layers));
