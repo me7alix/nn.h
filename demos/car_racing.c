@@ -6,7 +6,7 @@
 #define NN_IMPLEMENTATION
 #include "../nn.h"
 
-#define POPUL 200
+#define POPUL 50
 
 #define CAR_W 30
 #define CAR_H 50
