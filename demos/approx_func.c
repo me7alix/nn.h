@@ -13,6 +13,7 @@ bool is_learning_started = false;
 Mat inp, outp;
 
 void draw_lines(NN nn, int sw, int sh) {
+	Vector2 prev = {-100, 0};
 	for (int i = 0; i < sw; i+=2) {
 		Vector2 res = {(float)(i)/(sw-1), 0};
 		MAT_AT(NN_INPUT(nn), 0, 0) = res.x;
@@ -20,7 +21,8 @@ void draw_lines(NN nn, int sw, int sh) {
 		res.y = MAT_AT(NN_OUTPUT(nn), 0, 0);
 		res.x *= (float)sw;
 		res.y *= (float)sh;
-		DrawCircleV(res, 2, GREEN);
+		DrawLineEx(res, prev, 2, GREEN);
+		prev = res;
 	}
 }
 
@@ -92,7 +94,7 @@ int main(void) {
 		}
 
 		if (IsKeyPressed(KEY_ENTER)) {
-			is_learning_started = true;
+			is_learning_started = !is_learning_started;
 		}
 
 		for (int o = 0; o < 100; o++) {
@@ -111,10 +113,10 @@ int main(void) {
 
 			iter++;
 		}
-
-		draw_points(points, points_num, LIGHTGRAY, screenWidth, screenHeight);
+	
 		draw_lines(nn, screenWidth, screenHeight);
-		DrawText("Press ENTER to start learning process", 20, 20, 20, LIGHTGRAY);
+		draw_points(points, points_num, LIGHTGRAY, screenWidth, screenHeight);
+		DrawText("Press ENTER to toggle learning process", 20, 20, 20, LIGHTGRAY);
 
 		EndDrawing();
 	}
