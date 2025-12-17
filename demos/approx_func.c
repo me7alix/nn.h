@@ -107,8 +107,8 @@ int main(void) {
 
 #ifdef ADAM_OPT
 			adam_update(nn, &adam, g, learning_rate, 0.9, 0.999, 1e-8);
-#else 
-			nn_learn(nn, g, learning_rate); 
+#else
+			nn_learn(nn, g, learning_rate);
 #endif
 
 			iter++;
