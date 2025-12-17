@@ -6,11 +6,10 @@
 #define NN_IMPLEMENTATION
 #include "../nn.h"
 
-#define ADAM_OPT
 #define INPUTS        4
 #define OUTPUTS       3
-#define BATCH_SIZE    32
-#define LEARNING_RATE 0.0002
+#define BATCH_SIZE    16
+#define LEARNING_RATE 0.0006
 
 Layer nn_arch[] = {
 	(Layer){
@@ -18,7 +17,7 @@ Layer nn_arch[] = {
 	},
 	(Layer){
 		.actf  = ACT_RELU,
-		.size  = 6,
+		.size  = 8,
 		.randf = glorot_randf,
 	},
 	(Layer){
